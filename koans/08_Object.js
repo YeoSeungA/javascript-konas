@@ -5,8 +5,9 @@ describe('Object에 대해서 학습합니다.', function () {
   */
   it('Object의 기본을 확인합니다.', function () {
     const emptyObj = {};
-    expect(typeof emptyObj === 'object').to.equal(FILL_ME_IN);
-    expect(emptyObj.length).to.equal(FILL_ME_IN);
+    expect(typeof emptyObj === 'object').to.equal(true);
+    // => 객체는 길이라는 속성이 기본적으로 정의 X , object는 길이를 못 씀. .key 등으로 배열로 바꿔서
+    expect(emptyObj.length).to.equal(undefined);  
 
     const megalomaniac = {
       mastermind: 'Joker',
@@ -23,30 +24,30 @@ describe('Object에 대해서 학습합니다.', function () {
       },
     };
 
-    expect(megalomaniac.length).to.equal(FILL_ME_IN);
-    expect(megalomaniac.mastermind).to.equal(FILL_ME_IN);
-    expect(megalomaniac.henchwoman).to.equal(FILL_ME_IN);
-    expect(megalomaniac.henchWoman).to.equal(FILL_ME_IN);
-    expect(megalomaniac.getMembers()).to.deep.equal(FILL_ME_IN);
-    expect(megalomaniac.relations[FILL_ME_IN]).to.equal('Lucy');
-    expect(megalomaniac.twins['Heath Ledger']).to.deep.equal('FILL_ME_IN');
+    expect(megalomaniac.length).to.equal(undefined);   // 왜 5가 아니죠?? => 객체는 길이 개념이 없다.
+    expect(megalomaniac.mastermind).to.equal('Joker');
+    expect(megalomaniac.henchwoman).to.equal('Harley'); 
+    expect(megalomaniac.henchWoman).to.equal(undefined); // W가 대문자이다. 대소문자를 따짐.
+    expect(megalomaniac.getMembers()).to.deep.equal(['Joker', 'Harley']);
+    expect(megalomaniac.relations[2]).to.equal('Lucy');
+    expect(megalomaniac.twins['Heath Ledger']).to.deep.equal('The Dark Knight');
   });
 
   it('Object의 속성(property)를 다루는 방법을 확인합니다.', function () {
     const megalomaniac = { mastermind: 'Agent Smith', henchman: 'Agent Smith' };
 
-    expect('mastermind' in megalomaniac).to.equal(FILL_ME_IN);
+    expect('mastermind' in megalomaniac).to.equal(true);
 
     megalomaniac.mastermind = 'Neo';
-    expect(megalomaniac['mastermind']).to.equal(FILL_ME_IN);
+    expect(megalomaniac['mastermind']).to.equal('Neo');
 
-    expect('secretary' in megalomaniac).to.equal(FILL_ME_IN);
+    expect('secretary' in megalomaniac).to.equal(false);
 
     megalomaniac.secretary = 'Agent Smith';
-    expect('secretary' in megalomaniac).to.equal(FILL_ME_IN);
+    expect('secretary' in megalomaniac).to.equal(true);
 
     delete megalomaniac.henchman;
-    expect('henchman' in megalomaniac).to.equal(FILL_ME_IN);
+    expect('henchman' in megalomaniac).to.equal(false);
   });
 
   it("'this'는 method를 호출하는 시점에 결정됩니다.", function () {
@@ -63,14 +64,14 @@ describe('Object에 대해서 학습합니다.', function () {
       },
     };
 
-    expect(currentYear).to.equal(FILL_ME_IN);
-    expect(megalomaniac.calculateAge(currentYear)).to.equal(FILL_ME_IN);
+    expect(currentYear).to.equal(2024);
+    expect(megalomaniac.calculateAge(currentYear)).to.equal(54);
 
     megalomaniac.birthYear = 2000;
-    expect(megalomaniac.calculateAge(currentYear)).to.equal(FILL_ME_IN);
+    expect(megalomaniac.calculateAge(currentYear)).to.equal(24);
 
     megalomaniac.changeBirthYear(2010);
-    expect(megalomaniac.calculateAge(currentYear)).to.equal(FILL_ME_IN);
+    expect(megalomaniac.calculateAge(currentYear)).to.equal(14);
 
   /**
    * !!Advanced [this.mastermind]? this.birthYear? this가 무엇일까요?
@@ -99,16 +100,18 @@ describe('Object에 대해서 학습합니다.', function () {
     const megalomaniac = {
       mastermind: 'Brain',
       henchman: 'Pinky',
+      // 함수표현식 익명함수이지만 key를 알면 부를 수 있음.
       getFusion: function () {
         return this.henchman + this.mastermind;
       },
+      // 밑 코드도 함수.
       battleCry(numOfBrains) {
         return `They are ${this.henchman} and the` + ` ${this.mastermind}`.repeat(numOfBrains);
       },
     };
 
-    expect(megalomaniac.getFusion()).to.deep.equal(FILL_ME_IN);
-    expect(megalomaniac.battleCry(3)).to.deep.equal(FILL_ME_IN);
+    expect(megalomaniac.getFusion()).to.deep.equal('PinkyBrain');
+    expect(megalomaniac.battleCry(3)).to.deep.equal( 'They are Pinky and the Brain Brain Brain');
   });
 
   it('Object를 함수의 전달인자로 전달할 경우, reference가 전달됩니다.', function () {
@@ -128,21 +131,23 @@ describe('Object에 대해서 학습합니다.', function () {
       refObj.henchwoman = 'Adam West';
     }
     passedByReference(obj);
-    expect(obj.henchwoman).to.equal(FILL_ME_IN);
+    expect(obj.henchwoman).to.equal('Adam West');   // 얕은복사 - 값 공유
 
-    const assignedObj = obj;
+    const assignedObj = obj; // 얕은복사 - 값 공유.
     assignedObj['relations'] = [1, 2, 3];
-    expect(obj['relations']).to.deep.equal(FILL_ME_IN);
+    expect(obj['relations']).to.deep.equal([1, 2, 3]);  
 
-    const copiedObj = Object.assign({}, obj);
+    const copiedObj = Object.assign({}, obj); // 깊은복사 - 상태 공유 X
     copiedObj.mastermind = 'James Wood';
-    expect(obj.mastermind).to.equal(FILL_ME_IN);
+    expect(obj.mastermind).to.equal('Joker');
 
     obj.henchwoman = 'Harley';
-    expect(copiedObj.henchwoman).to.equal(FILL_ME_IN);
+    expect(copiedObj.henchwoman).to.equal('Adam West'); 
 
     delete obj.twins['Jared Leto'];
-    expect('Jared Leto' in copiedObj.twins).to.equal(FILL_ME_IN);
+    // 깊은 복사여도 1차원만 복사됨. 중첩된 배열이기 때문에 복사 x.
+    // for문으로 순회하면서 복사 , JSON 이용해서 복사해야 중첩된 참조자료형도 복사됨.
+    expect('Jared Leto' in copiedObj.twins).to.equal(false); 
 
     /*
     마지막 테스트 코드의 결과가 예상과는 달랐을 수도 있습니다.
